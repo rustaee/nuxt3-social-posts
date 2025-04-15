@@ -9,7 +9,7 @@ export interface Meta {
     images: Image[];
   }
   
-  export interface Post {
+export interface Post {
     id: number;
     platform: string|null;
     title: string|null;

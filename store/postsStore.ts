@@ -9,21 +9,19 @@ export const usePostsStore = defineStore('posts', {
   }),
   actions: {
     async loadPosts(){
-      //if the posts are already loaded
-      if (this.posts.length > 0) {
-        return this.posts
-      }
-          
+      // Avoid re-fetching if already loaded
+      if (this.posts.length) return
+
       this.loading = true;
       try{
         await new Promise((resolve) => setTimeout(resolve, 1000));
         this.posts = posts;
       } catch (error) {
-        console.error ('Loading posts failed', error)
+        console.error ('Loading posts failed', error) 
       } finally {
         this.loading = false
       }
-      return this.posts;
+      
     },
   },
   getters: {}

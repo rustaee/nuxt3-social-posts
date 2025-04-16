@@ -10,125 +10,125 @@ const searchQuery = ref((route.query.search as string) || '')
 const platformFilter = ref((route.query.platform as string) || '')
 
 const filteredPosts = computed(() => {
-  let posts = postsStore.posts;
+   let posts = postsStore.posts;
 
-  // Filter by search query
-  if (searchQuery.value) {
-    posts = posts.filter(post =>
-      (post.title || post.headline || '').toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
-  }
+   // Filter by search query
+   if (searchQuery.value) {
+      posts = posts.filter(post =>
+         (post.title || post.headline || '').toLowerCase().includes(searchQuery.value.toLowerCase())
+      )
+   }
 
-  //filter by platform
-  if (platformFilter.value ) {
-    posts = posts.filter(post => post.platform === platformFilter.value)
-  }
+   //filter by platform
+   if (platformFilter.value ) {
+      posts = posts.filter(post => post.platform === platformFilter.value)
+   }
 
-  return posts
+   return posts
   
 })
 
 const detailPageLink = (post: Post) => {
-  return { path: `/${post.id}`, query: route.query }
+   return { path: `/${post.id}`, query: route.query }
 }
 
 const platforms = computed(() => {
-  // Use a Set to avoid duplicates
-  const platformSet = new Set(postsStore.posts.map(post => post.platform))
+   // Use a Set to avoid duplicates
+   const platformSet = new Set(postsStore.posts.map(post => post.platform))
 
-  // Filter out empty or undefined platforms
-  return Array.from(platformSet).filter(Boolean)
+   // Filter out empty or undefined platforms
+   return Array.from(platformSet).filter(Boolean)
 })
 
 onMounted(async () => {
-  await postsStore.loadPosts()
+   await postsStore.loadPosts()
 
 })
 
 watch([searchQuery, platformFilter], ([newSearch, newPlatform]) => {
-  router.replace({
-    query: {
-      ...route.query,
-      search: newSearch || undefined,
-      platform: newPlatform || undefined
-    }
-  })
+   router.replace({
+      query: {
+         ...route.query,
+         search: newSearch || undefined,
+         platform: newPlatform || undefined
+      }
+   })
 })
 
 </script>
 <template>
-  <div class="w-full pt-5">
-   <div class="header border-round-xl pb-8">
-    <!-- top menu -->
-    <div class="menu flex flex-row justify-content-between bg-red-200  border-round-top-xl">
-      <div class="logo w-4  flex flex-row align-items-center">
-        <div class="border-circle w-3rem h-3rem m-2 ml-4 bg-white "/>
-        <span class="text-white font-bold">Home</span>
-      </div>
-      <div class="items">
-        <ul class="list-none flex flex-row m-4">
-          <li><NuxtLink to="/">Home</NuxtLink></li>
-          <li class="mx-4"><NuxtLink to="/">About</NuxtLink></li>
-          <li><NuxtLink to="/">Contact</NuxtLink></li>
-        </ul>
-      </div>
-    </div>
-    
-    <h1 class="text-white text-6xl font-normal text-center mt-8">Social Posts</h1>
-    <div class="filters flex flex-column justify-content-center align-items-center">
-      <!-- Search Input -->
-      <InputText
-        v-model="searchQuery"
-        placeholder="Search by title"
-        aria-label="Search posts by title"
-        class="mb-3 w-6 p-3"
-      />
+   <div class="w-full pt-5">
+      <div class="header border-round-xl pb-8">
+         <!-- top menu -->
+         <div class="menu flex flex-row justify-content-between bg-red-200  border-round-top-xl">
+            <div class="logo w-4  flex flex-row align-items-center">
+               <div class="border-circle w-3rem h-3rem m-2 ml-4 bg-white "></div>
+               <span class="text-white font-bold">Home</span>
+            </div>
+            <div class="items">
+               <ul class="list-none flex flex-row m-4">
+                  <li><NuxtLink to="/">Home</NuxtLink></li>
+                  <li class="mx-4"><NuxtLink to="/">About</NuxtLink></li>
+                  <li><NuxtLink to="/">Contact</NuxtLink></li>
+               </ul>
+            </div>
+         </div>
 
-      <!-- Platform Filter -->
-      <div class="flex flex-row w-6">
-        <Select v-model="platformFilter" :options="platforms" placeholder="All Platforms" show-clear class="w-full p-1" />
+         <h1 class="text-white text-6xl font-normal text-center mt-8">Social Posts</h1>
+         <div class="filters flex flex-column justify-content-center align-items-center">
+            <!-- Search Input -->
+            <InputText
+               v-model="searchQuery"
+               placeholder="Search by title"
+               aria-label="Search posts by title"
+               class="mb-3 w-6 p-3"
+            />
 
-        <Button class="w-4 ml-2" label="Filter"/>
-      </div>
+            <!-- Platform Filter -->
+            <div class="flex flex-row w-6">
+               <Select v-model="platformFilter" :options="platforms" placeholder="All Platforms" show-clear class="w-full p-1" />
+
+               <Button class="w-4 ml-2" label="Filter"/>
+            </div>
     
-    </div>
-   </div>
+         </div>
+      </div>
   
-   <!-- Posts List -->
-   <section class="flex flex-row flex-wrap justify-content-center mt-5">
-     <!-- Loading State -->
-     <div v-if="!postsStore.posts.length">
-      <ProgressSpinner
-        style="width: 50px; height: 50px" 
-        stroke-width="8" 
-        fill="transparent"
-        animation-duration=".5s" 
-        aria-label="loading" />
-    </div>
+      <!-- Posts List -->
+      <section class="flex flex-row flex-wrap justify-content-center mt-5">
+         <!-- Loading State -->
+         <div v-if="!postsStore.posts.length">
+            <ProgressSpinner
+               style="width: 50px; height: 50px" 
+               stroke-width="8" 
+               fill="transparent"
+               animation-duration=".5s" 
+               aria-label="loading" />
+         </div>
     
-    <!-- Posts List -->
-    <div v-else class="flex flex-row flex-wrap justify-content-center align-stretch ">
-      <div
-        v-for="post in filteredPosts"
-        :key="post.id"
-        class="lg:w-4 md:w-6 sm:w-full p-3"
-        >
-          <Card class="w-full h-full">
-            <template #title><NuxtLink :to="detailPageLink(post)">
-                <h3>{{ post.title || post.headline || 'Untitled Post' }}</h3>
-              </NuxtLink></template>
-            <template #content>
-              <p class="m-0">
-                  {{post.platform}}
-              </p>
-            </template>
-          </Card>
-        </div>
+         <!-- Posts List -->
+         <div v-else class="flex flex-row flex-wrap justify-content-center align-stretch ">
+            <div
+               v-for="post in filteredPosts"
+               :key="post.id"
+               class="lg:w-4 md:w-6 sm:w-full p-3"
+            >
+               <Card class="w-full h-full">
+                  <template #title><NuxtLink :to="detailPageLink(post)">
+                     <h3>{{ post.title || post.headline || 'Untitled Post' }}</h3>
+                  </NuxtLink></template>
+                  <template #content>
+                     <p class="m-0">
+                        {{post.platform}}
+                     </p>
+                  </template>
+               </Card>
+            </div>
       
-   </div>
-  </section>
+         </div>
+      </section>
    
-</div>
+   </div>
 </template>
 <style scoped>
   .header{

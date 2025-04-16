@@ -42,8 +42,8 @@ onMounted(async () => {
       />
 
       <!-- Post details-->
-      <div v-if="loading"> loading ... </div>
-      <section v-else-if="currentPost">
+      <div v-if="loading"  aria-live="polite"> loading ... </div>
+      <main v-else-if="currentPost">
          <div v-if="currentPost.meta.images">
             <div v-for="idx, img in currentPost.meta.images" :key="idx">
                <img :src="img.url" :alt="img.alt" class="w-full h-auto mb-4"/>
@@ -52,10 +52,12 @@ onMounted(async () => {
          </div>
          <h1>{{ currentPost.title || currentPost.headline || 'Untitled' }}</h1>
          <div v-html="currentPost.content"></div>
-         <span>{{ currentPost.published_date}}</span>
-         <span>{{ currentPost.meta.tags }}</span>
-      </section>
-      <div v-else>
+         <time :datetime="currentPost.published_date">{{ currentPost.published_date }}</time>
+         <ul v-if="currentPost.meta.tags">
+            <li v-for="(tag, index) in currentPost.meta.tags" :key="index"> {{ tag }}</li>
+         </ul>
+      </main>
+      <div  v-else role="alert">
          <p>Post not found.</p>
       </div>
    </div>

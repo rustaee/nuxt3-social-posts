@@ -58,20 +58,20 @@ watch([searchQuery, platformFilter], ([newSearch, newPlatform]) => {
 </script>
 <template>
    <div class="w-full pt-5">
-      <div class="header border-round-xl pb-8">
+      <header class="header border-round-xl pb-8">
          <!-- top menu -->
          <div class="menu flex flex-row justify-content-between bg-red-200  border-round-top-xl">
             <div class="logo w-4  flex flex-row align-items-center">
                <div class="border-circle w-3rem h-3rem m-2 ml-4 bg-white "></div>
                <span class="text-white font-bold">Home</span>
             </div>
-            <div class="items">
+            <nav class="items" role="navigation">
                <ul class="list-none flex flex-row m-4">
                   <li><NuxtLink to="/">Home</NuxtLink></li>
                   <li class="mx-4"><NuxtLink to="/">About</NuxtLink></li>
                   <li><NuxtLink to="/">Contact</NuxtLink></li>
                </ul>
-            </div>
+            </nav>
          </div>
 
          <h1 class="text-white text-6xl font-normal text-center mt-8">Social Posts</h1>
@@ -86,16 +86,16 @@ watch([searchQuery, platformFilter], ([newSearch, newPlatform]) => {
 
             <!-- Platform Filter -->
             <div class="flex flex-row w-6">
-               <Select v-model="platformFilter" :options="platforms" placeholder="All Platforms" show-clear class="w-full p-1" />
+               <Select v-model="platformFilter" :options="platforms" placeholder="All Platforms" show-clear class="w-full p-1" aria-label="Filter by platform"/>
 
                <Button class="w-4 ml-2" label="Filter"/>
             </div>
     
          </div>
-      </div>
+      </header>
   
       <!-- Posts List -->
-      <section class="flex flex-row flex-wrap justify-content-center mt-5">
+      <main class="flex flex-row flex-wrap justify-content-center mt-5"  aria-live="polite">
          <!-- Loading State -->
          <div v-if="!postsStore.posts.length">
             <ProgressSpinner
@@ -126,7 +126,7 @@ watch([searchQuery, platformFilter], ([newSearch, newPlatform]) => {
             </div>
       
          </div>
-      </section>
+      </main>
    
    </div>
 </template>
